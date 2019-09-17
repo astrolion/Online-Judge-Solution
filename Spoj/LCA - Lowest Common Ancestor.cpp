@@ -89,7 +89,7 @@ int main() {
                 memset(table, -1, sizeof table);
 
                 dfs(1);
-                //check(n);
+                check(n);
 
                 printf("Case %d:\n", tc);
                 int q; scanf("%d", &q);
