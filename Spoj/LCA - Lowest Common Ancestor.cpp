@@ -1,6 +1,14 @@
 #include "bits/stdc++.h"
 using namespace std;
 
+/**
+Accepted, the bug was assigning root parent as 0, as well as
+initially assigning whole table as 0
+
+https://www.spoj.com/submit/LCA/id=24408571
+
+**/
+
 const int N = 1005;
 vector<int>g[N];
 int inTime[N], outTime[N], table[N][20];
