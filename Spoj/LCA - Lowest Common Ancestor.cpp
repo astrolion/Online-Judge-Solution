@@ -11,56 +11,70 @@ https://www.spoj.com/submit/LCA/id=24408571
 
 const int N = 1005;
 vector<int>g[N];
-int inTime[N], outTime[N], table[N][20];
-int Time;
 
-void dfs(int node, int parent = -1) {
-        inTime[node] = ++Time;
-        table[node][0] = parent;
+/**
+LCA struct
 
-        for(int i = 1; i < 20; i++) {
-                if( table[node][i - 1] + 1  )
-                        table[node][i] = table[ table[node][i - 1] ][i - 1];
+**/
+
+struct LCA {
+
+        int Time, n, root, LOG2 ;
+        vector<int>inTime, outTime;
+        vector< vector<int> >table;
+
+        LCA(int root, int n) {
+                this->n = n;
+                this->root = root;
+                inTime.resize(n + 1, 0);
+                outTime.resize(n + 1, 0);
+                LOG2 = log2(n) + 1;
+                table.resize(n + 1, vector<int>(LOG2, -1) );
+                dfs(root);
+
         }
 
-        for(int i = 0; i < g[node].size(); i++ ) {
-                if( g[node][i] != parent ) {
-                        dfs(g[node][i], node);
+        void dfs(int node, int parent = -1) {
+                inTime[node] = ++Time;
+                table[node][0] = parent;
+
+                for(int i = 1; i < LOG2; i++) {
+                        if( table[node][i - 1] + 1 ) {
+                                table[node][i] = table[ table[node][i - 1] ][i - 1];
+                        }
                 }
-        }
-        outTime[node] = ++Time;
-}
 
-bool isAncestor(int u, int v) {
-        return inTime[u] <= inTime[v] && outTime[u] >= outTime[v];
-}
-
-int lca(int u, int v) {
-        if(isAncestor(u, v)) return u;
-        if(isAncestor(v, u)) return v;
-
-        //cout<<"here!"<<endl;
-
-        for(int i = 19; i >= 0; i--) {
-                if( !isAncestor( table[u][i], v ) & table[u][i] != -1  ) {
-                        u = table[u][i];
+                for(int i = 0; i < g[node].size(); i++ ) {
+                        if( g[node][i] ^ parent ) {
+                                dfs(g[node][i], node);
+                        }
                 }
-        }
-        return table[u][0];
-}
 
-void check(int n) {
-        for(int i = 1; i <= n; i++) {
-                cout << i << " -> " << inTime[i] << " <- " << outTime[i] << endl;
+                outTime[node] = ++Time;
+
         }
 
-        for(int i = 1; i <= n; i++) {
-                cout << i;
-                for(int j = 0; j < 20; j++)
-                        cout << " " << table[i][j];
-                cout << endl;
+        bool isAncestor(int u, int v) {
+                return inTime[u] <= inTime[v] && outTime[u] >= outTime[v];
         }
-}
+
+        int getLCA(int u, int v) {
+                if(isAncestor(u, v)) return u;
+                if(isAncestor(v, u)) return v;
+
+                for(int i = LOG2 - 1; i >= 0; i--) {
+                        if( table[u][i] != -1 && !isAncestor(table[u][i], v) ) {
+                                u = table[u][i];
+                        }
+                }
+
+                return table[u][0];
+
+        }
+
+
+
+};
 
 
 
@@ -84,18 +98,17 @@ int main() {
                         }
 
                 }
-                Time = 0;
 
-                memset(table, -1, sizeof table);
+                LCA astro(1,n);
 
-                dfs(1);
-                check(n);
 
                 printf("Case %d:\n", tc);
                 int q; scanf("%d", &q);
                 while(q--) {
                         int x, y; scanf("%d %d", &x, &y);
-                        printf("%d\n", lca(x, y));
+
+
+                        printf("%d\n",  astro.getLCA(x,y) );
                 }
 
 
