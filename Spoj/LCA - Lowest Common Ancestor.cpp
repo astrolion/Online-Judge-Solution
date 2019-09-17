@@ -31,7 +31,7 @@ int lca(int u, int v) {
         if(isAncestor(v, u)) return v;
 
         for(int i = 19; i >= 0; i--) {
-                if( !isAncestor( table[u][i], v )  ) {
+                if( !isAncestor( table[u][i], v ) & table[u][i]  ) {
                         u = table[u][i];
                 }
         }
