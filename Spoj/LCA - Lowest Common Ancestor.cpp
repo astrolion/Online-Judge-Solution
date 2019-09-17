@@ -62,6 +62,7 @@ int main() {
                 }
                 Time = 0;
 
+                memset(table, 0, sizeof table);
 
                 dfs(1,0);
 
