@@ -6,16 +6,17 @@ vector<int>g[N];
 int inTime[N], outTime[N], table[N][20];
 int Time;
 
-void dfs(int node, int parent = 0) {
+void dfs(int node, int parent = -1) {
         inTime[node] = ++Time;
         table[node][0] = parent;
 
         for(int i = 1; i < 20; i++) {
-                table[node][i] = table[ table[node][i - 1] ][i - 1];
+                if( table[node][i - 1] + 1  )
+                        table[node][i] = table[ table[node][i - 1] ][i - 1];
         }
 
         for(int i = 0; i < g[node].size(); i++ ) {
-                if( g[node][i] ^ parent ) {
+                if( g[node][i] != parent ) {
                         dfs(g[node][i], node);
                 }
         }
@@ -30,12 +31,27 @@ int lca(int u, int v) {
         if(isAncestor(u, v)) return u;
         if(isAncestor(v, u)) return v;
 
+        //cout<<"here!"<<endl;
+
         for(int i = 19; i >= 0; i--) {
-                if( !isAncestor( table[u][i], v ) & table[u][i]  ) {
+                if( !isAncestor( table[u][i], v ) & table[u][i] != -1  ) {
                         u = table[u][i];
                 }
         }
         return table[u][0];
+}
+
+void check(int n) {
+        for(int i = 1; i <= n; i++) {
+                cout << i << " -> " << inTime[i] << " <- " << outTime[i] << endl;
+        }
+
+        for(int i = 1; i <= n; i++) {
+                cout << i;
+                for(int j = 0; j < 20; j++)
+                        cout << " " << table[i][j];
+                cout << endl;
+        }
 }
 
 
@@ -62,15 +78,16 @@ int main() {
                 }
                 Time = 0;
 
-                memset(table, 0, sizeof table);
+                memset(table, -1, sizeof table);
 
-                dfs(1,0);
+                dfs(1);
+                //check(n);
 
                 printf("Case %d:\n", tc);
-                int q; scanf("%d",&q);
-                while(q--){
-                        int x, y; scanf("%d %d",&x,&y);
-                        printf("%d\n", lca(x,y));
+                int q; scanf("%d", &q);
+                while(q--) {
+                        int x, y; scanf("%d %d", &x, &y);
+                        printf("%d\n", lca(x, y));
                 }
 
 
