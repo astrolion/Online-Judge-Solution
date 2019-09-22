@@ -16,8 +16,19 @@ void dfs( int node, int dep ) {
 
         for(auto x : g[node]) dfs(x, dep + 1);
 
-        outTime[node] = Time;
+        outTime[node] = ++Time;
 
+}
+
+void show_table() {
+
+        for(int i = 1; i <= n; i++) {
+                cout << i << ": ";
+                for(int ii = 0; ii <= 10; ii++) {
+                        cout << " " << parent[i][ii];
+                }
+                cout << endl;
+        }
 }
 
 
@@ -30,15 +41,20 @@ int main() {
                 g[ parent[i][0] ].push_back(i);
         }
 
-        for(int i = 1; i < LOG; i++) {
-                for(int j = 0; j <= n; j++) {
-                        if( parent[ parent[j][i - 1] ][i - 1] ) {
-                                parent[i][j] = parent[ parent[j][i - 1] ][i - 1];
-                                continue;
+        //show_table();
+
+        for(int log = 1; log < LOG; log++) {
+                for(int i = 0; i <= n; i++) {
+                        if( parent[i][log - 1] == 0 ) {
+                                parent[i][log] = 0;
+                        } else {
+                                parent[i][log] = parent[ parent[i][log - 1] ][log - 1];
                         }
-                        parent[i][j] = 0;
                 }
+
         }
+
+        //show_table();
 
         dfs(0, 0);
 
@@ -71,6 +87,7 @@ int main() {
                                 ances = parent[ances][i];
                         }
                 }
+
 
                 int ans = upper_bound( save[ depth[node] ].begin(), save[ depth[node] ].end(), outTime[ances] )
                           - lower_bound( save[ depth[node] ].begin(), save[ depth[node] ].end(), inTime[ances] );
